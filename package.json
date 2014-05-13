@@ -1,0 +1,30 @@
+{
+  "name": "github-webhook",
+  "version": "0.0.0",
+  "description": "A flexible web server for reacting GitHub Webhooks",
+  "main": "github-webhook.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "bin": {
+    "github-webhook": "./github-webhook.js"
+  },
+  "keywords": [
+    "github",
+    "webhooks"
+  ],
+  "author": "Rod Vagg <r@va.gg> (http://r.va.gg)",
+  "license": "MIT",
+  "devDependencies": {
+    "tape": "~2.12.3",
+    "through2": "~0.4.1",
+    "supertest": "~0.12.1"
+  },
+  "dependencies": {
+    "bl": "~0.8.0",
+    "debug": "~0.8.1",
+    "github-webhook-handler": "~0.2.0",
+    "matchme": "~0.2.0",
+    "minimist": "~0.1.0"
+  }
+}
