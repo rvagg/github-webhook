@@ -161,7 +161,7 @@ function handleRules (log, rules, event) {
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    exec(rule.exec, function (err, stdout, stderr) {
+    exec(rule.exec, { env: process.env }, function (err, stdout, stderr) {
       if (err)
         return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
 

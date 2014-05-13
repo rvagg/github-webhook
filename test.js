@@ -13,7 +13,7 @@ function signBlob (key, blob) {
 test('invalid url gets 404', function (t) {
   t.plan(1)
 
-  var options = { port: 0, url: '/webhook', secret: 'foofaa' }
+  var options = { port: 0, path: '/webhook', secret: 'foofaa' }
     , server  = webhook(options)
 
   supertest(server)
@@ -30,7 +30,7 @@ test('invalid url gets 404', function (t) {
 test('valid url, incomplete data gets 400', function (t) {
   t.plan(1)
 
-  var options = { port: 0, url: '/webhook', secret: 'foofaa' }
+  var options = { port: 0, path: '/webhook', secret: 'foofaa' }
     , server  = webhook(options)
 
   supertest(server)
@@ -47,7 +47,7 @@ test('valid url, incomplete data gets 400', function (t) {
 test('valid url, complete data gets 200', function (t) {
   t.plan(2)
 
-  var options   = { port: 0, url: '/webhook', secret: 'foofaa' }
+  var options   = { port: 0, path: '/webhook', secret: 'foofaa' }
     , server    = webhook(options)
     , obj       = { some: 'github', object: 'with', properties: true }
     , json      = JSON.stringify(obj)
@@ -80,7 +80,7 @@ test('valid request triggers rule', function (t) {
     , eventType = 'issues'
     , options   = {
           port   : 0
-        , url    : '/webhook'
+        , path   : '/webhook'
         , secret : 'foofaa'
         , rules  : [
               {   // should not trigger this event
