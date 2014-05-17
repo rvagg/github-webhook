@@ -25,7 +25,7 @@ You can also specify a `--config <file>` where *file* is a JSON file containing 
   "log": "/var/log/webhook.log",
   "rules": [{
     "event": "push",
-    "match": "ref == refs/heads/master && repository.name == myrepo",
+    "match": "ref == \"refs/heads/master\" && repository.name == \"myrepo\"",
     "exec": "echo yay!"
   }]
 }
