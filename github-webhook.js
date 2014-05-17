@@ -57,7 +57,9 @@ if (require.main === module) {
     )
   }
 
-  createServer(config).listen.apply(server, config.host
+  server = createServer(config)
+
+  server.listen.apply(server, config.host
       ? [ config.port, config.host, listening ]
       : [ config.port, listening ]
   )
