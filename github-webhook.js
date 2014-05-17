@@ -15,14 +15,18 @@ const http          = require('http')
 if (require.main === module) {
   var config = {}
     , server
+    , listening
 
   if (typeof argv.config == 'string')
     config = JSON.parse(fs.readFileSync(argv.config))
 
   if (argv.port !== undefined)
     config.port = argv.port
-  else if (process.argv.PORT != undefined)
+  else if (process.argv.PORT !== undefined)
     config.port = process.argv.PORT
+
+  if (argv.host !== undefined)
+    config.host = String(argv.host)
 
   if (argv.secret !== undefined)
     config.secret = String(argv.secret)
@@ -42,9 +46,7 @@ if (require.main === module) {
     )
   }
 
-  server = createServer(config)
-
-  server.listen(config.port, function (err) {
+  var listening = function listening (err) {
     if (err)
       throw err
 
@@ -53,7 +55,12 @@ if (require.main === module) {
         + ':'
         + this.address().port
     )
-  })
+  }
+
+  createServer(config).listen.apply(server, config.host
+      ? [ config.port, config.host, listening ]
+      : [ config.port, listening ]
+  )
 }
 
 
