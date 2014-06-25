@@ -152,12 +152,13 @@ function createServer (options) {
 
 
 function handleRules (log, rules, event) {
-  rules.forEach(function (rule) {
-    if (rule.event != '*' && rule.event != event.event)
+  function executeRule (rule) {
+    if (rule.executing === true) {
+      rule.queued = true // we're busy working on this rule, queue up another run
       return
+    }
 
-    if (!matchme(event.payload, rule.match))
-      return
+    rule.executing = true
 
     var startTs = Date.now()
       , eventStr = 'event="'
@@ -193,9 +194,25 @@ function handleRules (log, rules, event) {
         fs.appendFile(log, out, 'utf8', function (err) {
           if (err)
             eventsDebug('Error writing to log file [%s]: %s', log, err.message)
+
+          rule.executing = false
+          if (rule.queued === true) {
+            rule.queued = false
+            executeRule(rule) // do it again!
+          }
         })
       }
     })
+  }
+
+  rules.forEach(function (rule) {
+    if (rule.event != '*' && rule.event != event.event)
+      return
+
+    if (!matchme(event.payload, rule.match))
+      return
+
+    executeRule(rule)
   })
 }
 
