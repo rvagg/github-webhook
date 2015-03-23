@@ -14,6 +14,10 @@
     "webhooks"
   ],
   "author": "Rod Vagg <r@va.gg> (http://r.va.gg)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rvagg/github-webhook.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "tape": "~2.12.3",
@@ -21,10 +25,13 @@
     "supertest": "~0.12.1"
   },
   "dependencies": {
-    "bl": "~0.8.0",
-    "debug": "~0.8.1",
-    "github-webhook-handler": "~0.2.0",
-    "matchme": "~0.2.0",
-    "minimist": "~0.1.0"
+    "bl": "~0.9.4",
+    "debug": "~2.1.3",
+    "github-webhook-handler": "~0.3.4",
+    "matchme": "~2.0.1",
+    "minimist": "~1.1.1",
+    "supertest": "~0.15.0",
+    "tape": "~3.5.0",
+    "through2": "~0.6.3"
   }
 }
