@@ -55,7 +55,7 @@ test('valid url, complete data gets 200', function (t) {
     , eventType = 'issues'
 
   server.webhookHandler.on(eventType, function (event) {
-    t.deepEqual(event, { event: eventType, id: id, payload: obj })
+    t.deepEqual(event, { event: eventType, id: id, payload: obj, url: '/webhook' })
   })
 
   supertest(server)
@@ -105,7 +105,7 @@ test('valid request triggers rule', function (t) {
   })
 
   server.webhookHandler.on(eventType, function (event) {
-    t.deepEqual(event, { event: eventType, id: id, payload: obj })
+    t.deepEqual(event, { event: eventType, id: id, payload: obj, url: '/webhook' })
     setTimeout(function () {
       fs.readFile(tmpfile, 'utf8', function (err, data) {
         t.error(err)
