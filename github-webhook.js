@@ -2,10 +2,12 @@
 
 const http          = require('http')
     , fs            = require('fs')
-    , exec          = require('child_process').exec
+    , spawn         = require('child_process').spawn
     , createHandler = require('github-webhook-handler')
     , debug         = require('debug')
     , matchme       = require('matchme')
+    , split2        = require('split2')
+    , through2      = require('through2')
     , argv          = require('minimist')(process.argv.slice(2))
     , eventKeys     = Object.keys(require('github-webhook-handler/events'))
     , serverDebug   = debug('github-webhook:server')
@@ -102,8 +104,9 @@ function createServer (options) {
   if (!Array.isArray(options.rules))
     options.rules = []
 
-  var server  = http.createServer()
-    , handler = createHandler(options)
+  var server    = http.createServer()
+    , handler   = createHandler(options)
+    , logStream = options.log && fs.createWriteStream(options.log)
 
   server.webhookHandler = handler
 
@@ -143,7 +146,7 @@ function createServer (options) {
   eventKeys.forEach(function (key) {
     handler.on(key, function (event) {
       eventsDebug(JSON.stringify(event))
-      handleRules(options.log, options.rules, event)
+      handleRules(logStream, options.rules, event)
     })
   })
 
@@ -151,7 +154,14 @@ function createServer (options) {
 }
 
 
-function handleRules (log, rules, event) {
+function prefixStream (stream, prefix) {
+  return stream.pipe(split2()).pipe(through2(function (data, enc, callback) {
+    cb(null, prefix + data)
+  }))
+}
+
+
+function handleRules (logStream, rules, event) {
   function executeRule (rule) {
     if (rule.executing === true) {
       rule.queued = true // we're busy working on this rule, queue up another run
@@ -168,41 +178,37 @@ function handleRules (log, rules, event) {
           + '", exec="'
           + rule.exec
           + '"'
+      , exec = Array.isArray(rule.exec) ? rule.exec : [ 'sh', '-c', rule.exec ]
+      , cp
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    exec(rule.exec, { env: process.env }, function (err, stdout, stderr) {
-      if (err)
-        return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
+    cp = spawn(exec.shift(), exec, { env: process.env })
+    
+    cp.on('error', function (err) {
+      return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
+    })
 
-      eventsDebug('Executed command [%s]', rule.exec)
+    cp.on('close', function (code) {
+      eventsDebug('Executed command [%s] exited with [%d]', rule.exec, code)
 
-      if (log) {
-        var out =
-            eventStr
-          + '\n' + new Date()
-          + '\n' + 'Took ' + (Date.now() - startTs) + ' ms'
-          + '\n----------------------------------------------------------------------'
-          + '\nStdout:'
-          + '\n' + stdout
-          + '\n----------------------------------------------------------------------'
-          + '\nStderr:'
-          + '\n' + stderr
-          + '\n----------------------------------------------------------------------'
-          + '\n'
+      if (logStream) {
+        logStream.write(eventStr + '\n')
+        logStream.write(new Date() + '\n')
+        logStream.write('Took ' + (Date.now() - startTs) + ' ms\n')
+      }
 
-        fs.appendFile(log, out, 'utf8', function (err) {
-          if (err)
-            eventsDebug('Error writing to log file [%s]: %s', log, err.message)
-
-          rule.executing = false
-          if (rule.queued === true) {
-            rule.queued = false
-            executeRule(rule) // do it again!
-          }
-        })
+      rule.executing = false
+      if (rule.queued === true) {
+        rule.queued = false
+        executeRule(rule) // do it again!
       }
     })
+
+    if (logStream) {
+      prefixStream(cp.stdout, 'stdout: ').pipe(logStream, { end: false })
+      prefixStream(cp.stderr, 'stderr: ').pipe(logStream, { end: false })
+    }
   }
 
   rules.forEach(function (rule) {

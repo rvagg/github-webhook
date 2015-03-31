@@ -86,7 +86,7 @@ test('valid request triggers rule', function (t) {
               {   // should not trigger this event
                   event : eventType
                 , match : 'some == xxgithub'
-                , exec  : 'echo "w00t!" > ' + tmpfile + '2'
+                , exec  : [ 'sh', '-c', 'echo "w00t!" > ' + tmpfile + '2' ]
               }
             , {   // should trigger this event
                   event : eventType

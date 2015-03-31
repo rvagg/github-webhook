@@ -46,7 +46,7 @@ When reacting to valid GitHub Webhook payloads, you can specify any number of ru
 
 * `"event"`: the event type to match, see the [GitHub Webhooks documentation](https://developer.github.com/webhooks/) for more details on the events you can receive
 * `"match"`: a basic object matching rule that will be applied against the payload received from GitHub. Should be flexible enough to match very specific parts of the PayLoad. See [matchme](https://github.com/DamonOehlman/matchme) for how this works.
-* `"exec"`: a system command to execute if this rule is matched, should obviously be something related to the event, perhaps a deploy on `"push"` events?
+* `"exec"`: a system command to execute if this rule is matched, should obviously be something related to the event, perhaps a deploy on `"push"` events? **Note**: if you provide a string it will be run with `sh -c "<string>"` (unlikely to be Windows-friendly), however if you provide an array of strings then the first element will be executed with the remaining elements as its arguments.
 
 You can either specify these rules in an array on the `"rules"` property in the config file, or as separate `--rule` commandline arguments where the components are separated by `:`, e.g.: `--rule event:match:exec` (you will generally want to quote the rule to prevent shell trickery).
 
@@ -60,4 +60,4 @@ You can `var server = require('github-webhook')(options)` and you'll receive a `
 
 ## License
 
-**github-webhook** is Copyright (c) 2014 Rod Vagg [@rvagg](https://twitter.com/rvagg) and licensed under the MIT License. All rights not explicitly granted in the MIT License are reserved. See the included [LICENSE.md](./LICENSE.md) file for more details.
+**github-webhook** is Copyright (c) 2015 Rod Vagg [@rvagg](https://twitter.com/rvagg) and licensed under the MIT License. All rights not explicitly granted in the MIT License are reserved. See the included [LICENSE.md](./LICENSE.md) file for more details.
