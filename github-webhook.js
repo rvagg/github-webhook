@@ -156,7 +156,7 @@ function createServer (options) {
 
 function prefixStream (stream, prefix) {
   return stream.pipe(split2()).pipe(through2(function (data, enc, callback) {
-    callback(null, prefix + data)
+    callback(null, prefix + data + '\n')
   }))
 }
 
