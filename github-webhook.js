@@ -24,8 +24,8 @@ if (require.main === module) {
 
   if (argv.port !== undefined)
     config.port = argv.port
-  else if (process.argv.PORT !== undefined)
-    config.port = process.argv.PORT
+  else if (process.env.PORT !== undefined)
+    config.port = process.env.PORT
 
   if (argv.host !== undefined)
     config.host = String(argv.host)
