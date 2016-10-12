@@ -106,7 +106,13 @@ function createServer (options) {
 
   var server    = http.createServer()
     , handler   = createHandler(options)
-    , logStream = options.log && fs.createWriteStream(options.log)
+    , logStream = typeof options.log == 'string' && (
+                    options.log === 'stdout'
+                    ? process.stdout
+                    : options.log === 'stderr'
+                      ? process.stderr
+                      : fs.createWriteStream(options.log)
+                  )
 
   server.webhookHandler = handler
 

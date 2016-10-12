@@ -37,7 +37,7 @@ You can also specify a `--config <file>` where *file* is a JSON file containing 
 * **path** (required): the path / route to listen to webhook requests on, should match what you tell GitHub
 * **secret** (required): the key used to hash the payload by GitHub that we verify against, should match what you tell GitHub
 * **host** (optional): if you want to restrict `listen()` to a specific host
-* **log** (optional): a file to print logs to, each command execution will be logged, also note that you can set the `DEBUG` env var to see debug output (see [debug](https://github.com/visionmedia/debug)) 
+* **log** (optional): a file to print logs to, each command execution will be logged, also note that you can set the `DEBUG` env var to see debug output (see [debug](https://github.com/visionmedia/debug)). Note that the special strings 'stdout' and 'stderr' will redirect log output to standard out and standard error respectively rather than files with those names.
 * **rules** (optional): an array of objects representing rules to match against and commands to execute, can also be supplied as individual `--rule` commandline arguments where the 3 properties are separated by `:` (details below)
 
 ### Rules
