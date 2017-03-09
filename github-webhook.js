@@ -162,7 +162,7 @@ function prefixStream (stream, prefix) {
 
 
 function handleRules (logStream, rules, event) {
-  function executeRule (rule) {
+  function executeRule (rule, payload) {
     if (rule.executing === true) {
       rule.queued = true // we're busy working on this rule, queue up another run
       return
@@ -183,7 +183,11 @@ function handleRules (logStream, rules, event) {
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    cp = spawn(exec.shift(), exec, { env: process.env })
+    var clone = Object.assign(process.env, payload);
+
+    console.log(clone)
+
+    cp = spawn(exec.shift(), exec, { env: clone })
     
     cp.on('error', function (err) {
       return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
@@ -218,7 +222,7 @@ function handleRules (logStream, rules, event) {
     if (!matchme(event.payload, rule.match))
       return
 
-    executeRule(rule)
+    executeRule(rule, event.payload)
   })
 }
 
