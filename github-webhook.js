@@ -183,11 +183,14 @@ function handleRules (logStream, rules, event) {
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    var clone = Object.assign(process.env, payload);
+    var addEnvProperties = ['ref'];
+    for(prop in payload) {
+        if (addEnvProperties.indexOf(prop) !== -1) {
+            Object.defineProperty(process.env, 'gw_' + prop, {value: payload[prop]})
+        }
+    }
 
-    console.log(clone)
-
-    cp = spawn(exec.shift(), exec, { env: clone })
+    cp = spawn(exec.shift(), exec, { env: process.env })
     
     cp.on('error', function (err) {
       return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
