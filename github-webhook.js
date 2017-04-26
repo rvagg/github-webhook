@@ -9,7 +9,6 @@ const http          = require('http')
     , split2        = require('split2')
     , through2      = require('through2')
     , argv          = require('minimist')(process.argv.slice(2))
-    , eventKeys     = Object.keys(require('github-webhook-handler/events'))
     , serverDebug   = debug('github-webhook:server')
     , eventsDebug   = debug('github-webhook:events')
 
@@ -143,11 +142,9 @@ function createServer (options) {
     eventsDebug('Non-fatal error: ' + JSON.stringify(err.message))
   })
 
-  eventKeys.forEach(function (key) {
-    handler.on(key, function (event) {
-      eventsDebug(JSON.stringify(event))
-      handleRules(logStream, options.rules, event)
-    })
+  handler.on('*', function (event) {
+    eventsDebug(JSON.stringify(event))
+    handleRules(logStream, options.rules, event)
   })
 
   return server
