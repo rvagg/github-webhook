@@ -91,12 +91,12 @@ test('valid request triggers rule', function (t) {
             , {   // should trigger this event
                   event : eventType
                 , match : 'some == github'
-                , exec  : 'echo "w00t!" > ' + tmpfile
+                , exec  : 'echo $gw_ref > ' + tmpfile
               }
           ]
       }
     , server    = webhook(options)
-    , obj       = { some: 'github', object: 'with', properties: true }
+    , obj       = { some: 'github', object: 'with', properties: true, ref: 'refs/heads/dev' }
     , json      = JSON.stringify(obj)
     , id        = '123abc'
 
@@ -109,7 +109,7 @@ test('valid request triggers rule', function (t) {
     setTimeout(function () {
       fs.readFile(tmpfile, 'utf8', function (err, data) {
         t.error(err)
-        t.equal(data, 'w00t!\n')
+        t.equal(data, 'refs/heads/dev\n')
       })
       fs.exists(tmpfile + '2', function (exists) {
         t.notOk(exists, 'does not exist, didn\'t trigger second event')

@@ -8,6 +8,7 @@ const http          = require('http')
     , matchme       = require('matchme')
     , split2        = require('split2')
     , through2      = require('through2')
+    , flatten       = require('flat')
     , argv          = require('minimist')(process.argv.slice(2))
     , eventKeys     = Object.keys(require('github-webhook-handler/events'))
     , serverDebug   = debug('github-webhook:server')
@@ -162,7 +163,7 @@ function prefixStream (stream, prefix) {
 
 
 function handleRules (logStream, rules, event) {
-  function executeRule (rule) {
+  function executeRule (rule, payload) {
     if (rule.executing === true) {
       rule.queued = true // we're busy working on this rule, queue up another run
       return
@@ -183,6 +184,17 @@ function handleRules (logStream, rules, event) {
 
     eventsDebug('Matched rule for %s', eventStr)
 
+    var addEnvProperties = [
+      'ref',
+      'deployment_ref'
+    ]
+    var flatPayload = flatten(payload, { delimiter: '_' })
+    for(prop in flatPayload) {
+        if (addEnvProperties.indexOf(prop) !== -1) {
+            Object.defineProperty(process.env, 'gw_' + prop, {value: flatPayload[prop]})
+        }
+    }
+
     cp = spawn(exec.shift(), exec, { env: process.env })
     
     cp.on('error', function (err) {
@@ -201,7 +213,7 @@ function handleRules (logStream, rules, event) {
       rule.executing = false
       if (rule.queued === true) {
         rule.queued = false
-        executeRule(rule) // do it again!
+        executeRule(rule, payload) // do it again!
       }
     })
 
@@ -218,7 +230,7 @@ function handleRules (logStream, rules, event) {
     if (!matchme(event.payload, rule.match))
       return
 
-    executeRule(rule)
+    executeRule(rule, event.payload)
   })
 }
 
