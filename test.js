@@ -82,6 +82,7 @@ test('valid request triggers rule', function (t) {
           port   : 0
         , path   : '/webhook'
         , secret : 'foofaa'
+        , properties : [ "ref" ]
         , rules  : [
               {   // should not trigger this event
                   event : eventType
