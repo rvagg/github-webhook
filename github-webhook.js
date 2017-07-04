@@ -39,6 +39,12 @@ if (require.main === module) {
   if (argv.log !== undefined)
     config.log = String(argv.log)
 
+  if (!Array.isArray(config.properties))
+    config.properties = []
+
+  if (argv.properties !== undefined)
+    config.properties = Array.isArray(argv.properties) ? argv.properties : [ argv.properties ]
+
   if (!Array.isArray(config.rules))
     config.rules = []
 
@@ -145,7 +151,7 @@ function createServer (options) {
 
   handler.on('*', function (event) {
     eventsDebug(JSON.stringify(event))
-    handleRules(logStream, options.rules, event)
+    handleRules(logStream, options.rules, event, options.properties)
   })
 
   return server
@@ -159,8 +165,8 @@ function prefixStream (stream, prefix) {
 }
 
 
-function handleRules (logStream, rules, event) {
-  function executeRule (rule, payload) {
+function handleRules (logStream, rules, event, properties) {
+  function executeRule (rule, payload, properties) {
     if (rule.executing === true) {
       rule.queued = true // we're busy working on this rule, queue up another run
       return
@@ -181,13 +187,9 @@ function handleRules (logStream, rules, event) {
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    var addEnvProperties = [
-      'ref',
-      'deployment_ref'
-    ]
     var flatPayload = flatten(payload, { delimiter: '_' })
     for(prop in flatPayload) {
-        if (addEnvProperties.indexOf(prop) !== -1) {
+        if (properties.indexOf(prop) !== -1) {
             Object.defineProperty(process.env, 'gw_' + prop, {value: flatPayload[prop]})
         }
     }
@@ -210,7 +212,7 @@ function handleRules (logStream, rules, event) {
       rule.executing = false
       if (rule.queued === true) {
         rule.queued = false
-        executeRule(rule, payload) // do it again!
+        executeRule(rule, payload, properties) // do it again!
       }
     })
 
@@ -227,7 +229,7 @@ function handleRules (logStream, rules, event) {
     if (!matchme(event.payload, rule.match))
       return
 
-    executeRule(rule, event.payload)
+    executeRule(rule, event.payload, properties)
   })
 }
 
