@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// Catch EPIPE Errors
+require('epipebomb')()
+
 const http          = require('http')
     , fs            = require('fs')
     , spawn         = require('child_process').spawn
@@ -112,7 +115,7 @@ function createServer (options) {
 
   var server    = http.createServer()
     , handler   = createHandler(options)
-    , logStream = options.log && fs.createWriteStream(options.log)
+    , logStream = options.log && fs.createWriteStream(options.log, {flags: 'a'})
 
   server.webhookHandler = handler
 
