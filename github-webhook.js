@@ -185,7 +185,7 @@ function handleRules (logStream, rules, event, properties) {
           + '", exec="'
           + rule.exec
           + '"'
-      , exec = Array.isArray(rule.exec) ? rule.exec : [ 'sh', '-c', rule.exec ]
+      , exec = Array.isArray(rule.exec) ? rule.exec : [ 'bash', '-i', '-c', rule.exec ]
       , cp
 
     eventsDebug('Matched rule for %s', eventStr)
