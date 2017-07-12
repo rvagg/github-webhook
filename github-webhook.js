@@ -160,6 +160,24 @@ function prefixStream (stream, prefix) {
   }))
 }
 
+function envFromPayload(payload, prefix, env) {
+  if (!env) env = {};
+  Object.keys(payload).forEach(function(k) {
+    var val = payload[k];
+    switch (typeof val) {
+      case 'boolean':
+      case 'number':
+      case 'string':
+      env[prefix + k] = val;
+      break;
+      case 'object':
+      if (val) envFromPayload(val, prefix + k + '_', env);
+      break;
+    }
+  });
+  return env;
+}
+
 
 function handleRules (logStream, rules, event) {
   function executeRule (rule) {
@@ -183,8 +201,10 @@ function handleRules (logStream, rules, event) {
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    cp = spawn(exec.shift(), exec, { env: process.env })
-    
+    cp = spawn(exec.shift(), exec, {
+      env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env)
+    });
+
     cp.on('error', function (err) {
       return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
     })
