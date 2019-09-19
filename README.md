@@ -1,6 +1,6 @@
 # github-webhook
 
-[![Build Status](https://travis-ci.org/rvagg/github-webhook.svg?branch=master)](https://travis-ci.org/rvagg/github-webhook)
+[![Build Status](https://travis-ci.com/rvagg/github-webhook.svg?branch=master)](https://travis-ci.com/rvagg/github-webhook)
 
 [![NPM](https://nodei.co/npm/github-webhook.svg)](https://nodei.co/npm/github-webhook/)
 
