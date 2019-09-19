@@ -1,5 +1,5 @@
 {
-  "name": "github-webhook",
+  "name": "@kapouer/github-webhook",
   "version": "1.1.3",
   "description": "A flexible web server for reacting GitHub Webhooks",
   "main": "github-webhook.js",
@@ -20,16 +20,16 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "bl": "~1.0.0",
-    "supertest": "~1.0.1",
-    "tape": "~4.0.0"
+    "bl": "^1.0.0",
+    "supertest": "^1.0.1",
+    "tape": "^4.0.0"
   },
   "dependencies": {
-    "debug": "~2.1.3",
-    "github-webhook-handler": "~0.4.0",
-    "matchme": "~2.0.1",
-    "minimist": "~1.1.1",
-    "split2": "~0.2.1",
-    "through2": "~2.0.0"
+    "debug": "^2.1.3",
+    "github-webhook-handler": "^0.7.1",
+    "matchme": "^2.0.1",
+    "minimist": "^1.1.1",
+    "split2": "^0.2.1",
+    "through2": "^2.0.0"
   }
 }
