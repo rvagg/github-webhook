@@ -1,154 +1,149 @@
 #!/usr/bin/env node
 
-const http          = require('http')
-    , fs            = require('fs')
-    , spawn         = require('child_process').spawn
-    , createHandler = require('github-webhook-handler')
-    , debug         = require('debug')
-    , matchme       = require('matchme')
-    , split2        = require('split2')
-    , through2      = require('through2')
-    , argv          = require('minimist')(process.argv.slice(2))
-    , serverDebug   = debug('github-webhook:server')
-    , eventsDebug   = debug('github-webhook:events')
-
+const http = require('http')
+const fs = require('fs')
+const spawn = require('child_process').spawn
+const createHandler = require('github-webhook-handler')
+const debug = require('debug')
+const matchme = require('matchme')
+const split2 = require('split2')
+const through2 = require('through2')
+const argv = require('minimist')(process.argv.slice(2))
+const serverDebug = debug('github-webhook:server')
+const eventsDebug = debug('github-webhook:events')
 
 if (require.main === module) {
-  var config = {}
-    , server
-    , listening
+  let config = {}
 
-  if (typeof argv.config == 'string')
+  if (typeof argv.config === 'string') {
     config = JSON.parse(fs.readFileSync(argv.config))
+  }
 
-  if (argv.port !== undefined)
+  if (argv.port !== undefined) {
     config.port = argv.port
-  else if (process.env.PORT !== undefined)
+  } else if (process.env.PORT !== undefined) {
     config.port = process.env.PORT
+  }
 
-  if (argv.host !== undefined)
+  if (argv.host !== undefined) {
     config.host = String(argv.host)
+  }
 
-  if (argv.secret !== undefined)
+  if (argv.secret !== undefined) {
     config.secret = String(argv.secret)
+  }
 
-  if (argv.path !== undefined)
+  if (argv.path !== undefined) {
     config.path = String(argv.path)
+  }
 
-  if (argv.log !== undefined)
+  if (argv.log !== undefined) {
     config.log = String(argv.log)
+  }
 
-  if (!Array.isArray(config.rules))
+  if (!Array.isArray(config.rules)) {
     config.rules = []
+  }
 
   if (argv.rule) {
     config.rules = config.rules.concat(
-      collectRules(Array.isArray(argv.rule) ? argv.rule : [ argv.rule ])
+      collectRules(Array.isArray(argv.rule) ? argv.rule : [argv.rule])
     )
   }
 
-  var listening = function listening (err) {
-    if (err)
+  const listening = function listening (err) {
+    if (err) {
       throw err
+    }
 
-    serverDebug('Listening on http://'
-        + this.address().address
-        + ':'
-        + this.address().port
-    )
+    serverDebug(`Listening on http://${this.address().address}:${this.address().port}`)
   }
 
-  server = createServer(config)
+  const server = createServer(config)
 
   server.listen.apply(server, config.host
-      ? [ config.port, config.host, listening ]
-      : [ config.port, listening ]
+    ? [config.port, config.host, listening]
+    : [config.port, listening]
   )
 }
 
-
 function collectRules (rules) {
-  return rules.map(function (rule) {
-    var c = rule.indexOf(':')
-      , event
-      , match
-      , exec
-
-    if (c < 0)
+  return rules.map((rule) => {
+    let c = rule.indexOf(':')
+    if (c < 0) {
       return
+    }
 
-    event = rule.substring(0, c)
+    const event = rule.substring(0, c)
 
     rule = rule.substring(c + 1)
     c = rule.indexOf(':')
-    if (c < 0)
+    if (c < 0) {
       return
+    }
 
-    match = rule.substring(0, c)
-    exec = rule.substring(c + 1)
+    const match = rule.substring(0, c)
+    const exec = rule.substring(c + 1)
 
     return event && match && exec && {
-        event : event
-      , match : match
-      , exec  : exec
+      event: event,
+      match: match,
+      exec: exec
     }
   }).filter(Boolean)
 }
 
-
 function createServer (options) {
-  if (options.port === undefined)
+  if (options.port === undefined) {
     throw new TypeError('must provide a \'port\' option')
+  }
 
-  if (!Array.isArray(options.rules))
+  if (!Array.isArray(options.rules)) {
     options.rules = []
+  }
 
-  var server    = http.createServer()
-    , handler   = createHandler(options)
-    , logStream = typeof options.log == 'string' && (
-                    options.log === 'stdout'
-                    ? process.stdout
-                    : options.log === 'stderr'
-                      ? process.stderr
-                      : fs.createWriteStream(options.log)
-                  )
+  const server = http.createServer()
+  const handler = createHandler(options)
+  const logStream = typeof options.log === 'string' && (
+    options.log === 'stdout'
+      ? process.stdout
+      : options.log === 'stderr'
+        ? process.stderr
+        : fs.createWriteStream(options.log)
+  )
 
   server.webhookHandler = handler
 
-  server.on('request', function (req, res) {
-    serverDebug('Connection from '
-        + req.socket.address().address
-        + ':'
-        + req.socket.address().port
-    )
+  server.on('request', (req, res) => {
+    serverDebug(`Connection from ${req.socket.address().address}:${req.socket.address().port}`)
 
-    handler(req, res, function (err) {
+    handler(req, res, (err) => {
       function response (code, msg) {
-
-        var address = req.socket.address()
+        const address = req.socket.address()
         serverDebug('Response to %s:%s: %d "%s"'
-            , address ? address.address : 'unknown'
-            , address ? address.port : '??'
-            , code
-            , msg
+          , address ? address.address : 'unknown'
+          , address ? address.port : '??'
+          , code
+          , msg
         )
 
         res.writeHead(code, { 'content-type': 'text/json' })
         res.end(JSON.stringify({ error: msg }))
       }
 
-      if (err)
-        return response(500, 'Internal server error: ' + err.message)
+      if (err) {
+        return response(500, `Internal server error: ${err.message}`)
+      }
 
       response(404, 'Resource not found on this server')
     })
   })
 
-  handler.on('error', function (err) {
+  handler.on('error', (err) => {
     eventsDebug('Non-fatal error: ' + JSON.stringify(err.message))
   })
 
-  handler.on('*', function (event) {
+  handler.on('*', (event) => {
     eventsDebug(JSON.stringify(event))
     handleRules(logStream, options.rules, event)
   })
@@ -156,33 +151,41 @@ function createServer (options) {
   return server
 }
 
-
 function prefixStream (stream, prefix) {
-  return stream.pipe(split2()).pipe(through2(function (data, enc, callback) {
-    callback(null, prefix + data + '\n')
+  return stream.pipe(split2()).pipe(through2((data, enc, callback) => {
+    callback(null, `${prefix}${data}\n`)
   }))
 }
 
-function envFromPayload(payload, prefix, env) {
-  if (!env) env = {};
-	if (payload.ref && payload.ref.startsWith('refs/heads/')) payload.branch = payload.ref.substring('refs/heads/'.length);
-	else payload.branch = null;
-  Object.keys(payload).forEach(function(k) {
-    var val = payload[k];
+function envFromPayload (payload, prefix, env) {
+  if (!env) {
+    env = {}
+  }
+
+  if (payload.ref && payload.ref.startsWith('refs/heads/')) {
+    payload.branch = payload.ref.substring('refs/heads/'.length)
+  } else {
+    payload.branch = null
+  }
+
+  Object.keys(payload).forEach((k) => {
+    const val = payload[k]
     switch (typeof val) {
       case 'boolean':
       case 'number':
       case 'string':
-      env[prefix + k] = val;
-      break;
+        env[prefix + k] = val
+        break
       case 'object':
-      if (val) envFromPayload(val, prefix + k + '_', env);
-      break;
+        if (val) {
+          envFromPayload(val, prefix + k + '_', env)
+        }
+        break
     }
-  });
-  return env;
-}
+  })
 
+  return env
+}
 
 function handleRules (logStream, rules, event) {
   function executeRule (rule) {
@@ -193,28 +196,21 @@ function handleRules (logStream, rules, event) {
 
     rule.executing = true
 
-    var startTs = Date.now()
-      , eventStr = 'event="'
-          + rule.event
-          + '", match="'
-          + rule.match
-          + '", exec="'
-          + rule.exec
-          + '"'
-      , exec = Array.isArray(rule.exec) ? rule.exec : [ 'sh', '-c', rule.exec ]
-      , cp
+    const startTs = Date.now()
+    const eventStr = `event="${rule.event}", match="${rule.match}", exec="${rule.exec}"`
+    const exec = Array.isArray(rule.exec) ? rule.exec : ['sh', '-c', rule.exec]
 
     eventsDebug('Matched rule for %s', eventStr)
 
-    cp = spawn(exec.shift(), exec, {
+    const cp = spawn(exec.shift(), exec, {
       env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env)
-    });
+    })
 
-    cp.on('error', function (err) {
+    cp.on('error', (err) => {
       return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
     })
 
-    cp.on('close', function (code) {
+    cp.on('close', (code) => {
       eventsDebug('Executed command [%s] exited with [%d]', rule.exec, code)
 
       if (logStream) {
@@ -236,16 +232,17 @@ function handleRules (logStream, rules, event) {
     }
   }
 
-  rules.forEach(function (rule) {
-    if (rule.event != '*' && rule.event != event.event)
+  rules.forEach((rule) => {
+    if (rule.event !== '*' && rule.event !== event.event) {
       return
+    }
 
-    if (!matchme(event.payload, rule.match))
+    if (!matchme(event.payload, rule.match)) {
       return
+    }
 
     executeRule(rule)
   })
 }
-
 
 module.exports = createServer
