@@ -1,5 +1,7 @@
 # github-webhook
 
+[![Build Status](https://travis-ci.org/rvagg/github-webhook.svg?branch=master)](https://travis-ci.org/rvagg/github-webhook)
+
 [![NPM](https://nodei.co/npm/github-webhook.svg)](https://nodei.co/npm/github-webhook/)
 
 A stand-alone GitHub Webhook end-point server.
@@ -60,4 +62,4 @@ You can `var server = require('github-webhook')(options)` and you'll receive a `
 
 ## License
 
-**github-webhook** is Copyright (c) 2015 Rod Vagg [@rvagg](https://twitter.com/rvagg) and licensed under the MIT License. All rights not explicitly granted in the MIT License are reserved. See the included [LICENSE.md](./LICENSE.md) file for more details.
+**github-webhook** is Copyright (c) 2015 Rod Vagg and licensed under the MIT License. All rights not explicitly granted in the MIT License are reserved. See the included [LICENSE.md](./LICENSE.md) file for more details.
