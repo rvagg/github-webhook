@@ -162,6 +162,8 @@ function prefixStream (stream, prefix) {
 
 function envFromPayload(payload, prefix, env) {
   if (!env) env = {};
+	if (payload.ref && payload.ref.startsWith('refs/heads/')) payload.branch = payload.ref.substring('refs/heads/'.length);
+	else payload.branch = null;
   Object.keys(payload).forEach(function(k) {
     var val = payload[k];
     switch (typeof val) {
