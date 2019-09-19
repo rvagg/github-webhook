@@ -120,6 +120,7 @@ function createServer (options) {
     handler(req, res, (err) => {
       function response (code, msg) {
         const address = req.socket.address()
+
         serverDebug('Response to %s:%s: %d "%s"'
           , address ? address.address : 'unknown'
           , address ? address.port : '??'

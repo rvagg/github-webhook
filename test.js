@@ -12,13 +12,17 @@ function signBlob (key, blob) {
 test('invalid url gets 404', (t) => {
   t.plan(1)
 
-  var options = { port: 0, path: '/webhook', secret: 'foofaa' }
-  var server = webhook(options)
+  const options = { port: 0, path: '/webhook', secret: 'foofaa' }
+  const server = webhook(options)
 
   supertest(server)
-    .get('/')
+    .post('/')
+    .set('X-Hub-Signature', signBlob('foofaa', '{}'))
+    .set('X-Github-Event', 'issues')
+    .set('X-Github-Delivery', '123abc')
     .expect('Content-Type', /json/)
     .expect(404)
+    .send('{}')
     .end((err) => {
       t.error(err)
     })
@@ -27,13 +31,16 @@ test('invalid url gets 404', (t) => {
 test('valid url, incomplete data gets 400', (t) => {
   t.plan(1)
 
-  var options = { port: 0, path: '/webhook', secret: 'foofaa' }
-  var server = webhook(options)
+  const options = { port: 0, path: '/webhook', secret: 'foofaa' }
+  const server = webhook(options)
 
   supertest(server)
-    .get('/webhook')
+    .post('/webhook')
+    .set('X-Github-Event', 'issues')
+    .set('X-Github-Delivery', '123abc')
     .expect('Content-Type', /json/)
     .expect(400)
+    .send('{}')
     .end((err) => {
       t.error(err)
     })
@@ -42,15 +49,16 @@ test('valid url, incomplete data gets 400', (t) => {
 test('valid url, complete data gets 200', (t) => {
   t.plan(2)
 
-  var options = { port: 0, path: '/webhook', secret: 'foofaa' }
-  var server = webhook(options)
-  var obj = { some: 'github', object: 'with', properties: true }
-  var json = JSON.stringify(obj)
-  var id = '123abc'
-  var eventType = 'issues'
+  const options = { port: 0, path: '/webhook', secret: 'foofaa' }
+  const server = webhook(options)
+  const obj = { some: 'github', object: 'with', properties: true }
+  const json = JSON.stringify(obj)
+  const id = '123abc'
+  const eventType = 'issues'
 
   server.webhookHandler.on(eventType, (event) => {
-    t.deepEqual(event, { event: eventType, id: id, payload: obj, url: '/webhook' })
+    delete event.host // too hard
+    t.deepEqual(event, { event: eventType, id: id, payload: obj, protocol: undefined, url: '/webhook', path: '/webhook' })
   })
 
   supertest(server)
@@ -69,9 +77,9 @@ test('valid url, complete data gets 200', (t) => {
 test('valid request triggers rule', (t) => {
   t.plan(5)
 
-  var tmpfile = path.join(__dirname, '/__test_data.' + Math.random())
-  var eventType = 'issues'
-  var options = {
+  const tmpfile = path.join(__dirname, '/__test_data.' + Math.random())
+  const eventType = 'issues'
+  const options = {
     port: 0,
     path: '/webhook',
     secret: 'foofaa',
@@ -88,24 +96,25 @@ test('valid request triggers rule', (t) => {
       }
     ]
   }
-  var server = webhook(options)
-  var obj = { some: 'github', object: 'with', properties: true }
-  var json = JSON.stringify(obj)
-  var id = '123abc'
+  const server = webhook(options)
+  const obj = { some: 'github', object: 'with', properties: true }
+  const json = JSON.stringify(obj)
+  const id = '123abc'
 
   t.on('end', () => {
     fs.unlink(tmpfile, () => {})
   })
 
   server.webhookHandler.on(eventType, (event) => {
-    t.deepEqual(event, { event: eventType, id: id, payload: obj, url: '/webhook' })
+    delete event.host // too hard
+    t.deepEqual(event, { event: eventType, id: id, payload: obj, protocol: undefined, url: '/webhook', path: '/webhook' })
     setTimeout(() => {
       fs.readFile(tmpfile, 'utf8', (err, data) => {
         t.error(err)
         t.equal(data, 'w00t!\n')
       })
       fs.stat(`${tmpfile}2`, (err) => {
-        t.error(err, 'does not exist, didn\'t trigger second event')
+        t.ok(err, 'does not exist, didn\'t trigger second event')
       })
     }, 100)
   })
