@@ -17,7 +17,6 @@ const http          = require('http')
 if (require.main === module) {
   var config = {}
     , server
-    , listening
 
   if (typeof argv.config == 'string')
     config = JSON.parse(fs.readFileSync(argv.config))
@@ -48,17 +47,6 @@ if (require.main === module) {
     )
   }
 
-  var listening = function listening (err) {
-    if (err)
-      throw err
-
-    serverDebug('Listening on http://'
-        + this.address().address
-        + ':'
-        + this.address().port
-    )
-  }
-
   server = createServer(config)
 
   server.listen.apply(server, config.host
@@ -67,6 +55,16 @@ if (require.main === module) {
   )
 }
 
+function listening(err) {
+  if (err)
+    throw err
+
+  serverDebug('Listening on http://'
+      + this.address().address
+      + ':'
+      + this.address().port
+  )
+}
 
 function collectRules (rules) {
   return rules.map(function (rule) {
@@ -160,12 +158,14 @@ function prefixStream (stream, prefix) {
   }))
 }
 
-function envFromPayload(payload, prefix, env) {
+function envFromPayload(pay, prefix, env) {
   if (!env) env = {};
-	if (payload.ref && payload.ref.startsWith('refs/heads/')) payload.branch = payload.ref.substring('refs/heads/'.length);
-	else payload.branch = null;
-  Object.keys(payload).forEach(function(k) {
-    var val = payload[k];
+  if (pay.ref) {
+    pay.tag = (/refs\/tags\/(.+)/.exec(pay.ref) || []).pop();
+    pay.branch = (/refs\/heads\/(.+)/.exec(pay.base_ref || pay.ref) || []).pop();
+  }
+  Object.keys(pay).forEach(function(k) {
+    var val = pay[k];
     switch (typeof val) {
       case 'boolean':
       case 'number':
