@@ -27,8 +27,8 @@
     "tape": "~4.11.0"
   },
   "dependencies": {
+    "bl": "~4.0.0",
     "debug": "~4.1.1",
-    "get-stream": "^5.1.0",
     "github-webhook-handler": "~1.0.0",
     "matchme": "~2.0.1",
     "minimist": "~1.1.1",

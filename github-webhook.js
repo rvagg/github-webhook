@@ -2,14 +2,14 @@
 
 const http = require('http')
 const fs = require('fs')
-const Child = require('child_process')
+const childProcess = require('child_process')
 const PassThrough = require('stream').PassThrough
 const createHandler = require('github-webhook-handler')
 const debug = require('debug')
 const matchme = require('matchme')
 const split2 = require('split2')
 const through2 = require('through2')
-const getStream = require('get-stream')
+const bl = require('bl')
 const argv = require('minimist')(process.argv.slice(2))
 const serverDebug = debug('github-webhook:server')
 const eventsDebug = debug('github-webhook:events')
@@ -209,7 +209,7 @@ function handleRules (logStream, rules, event) {
       env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env)
     }
 
-    const cp = Child.spawn(exec.shift(), exec, childOpts)
+    const cp = childProcess.spawn(exec.shift(), exec, childOpts)
 
     cp.on('error', (err) => {
       return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
@@ -235,14 +235,22 @@ function handleRules (logStream, rules, event) {
     prefixStream(cp.stderr, '! ').pipe(past)
 
     if (logStream) {
-      past.pipe(logStream, {end: false})
+      past.pipe(logStream, { end: false })
     }
-    if (rule.report) getStream(past).then(function(str) {
-      childOpts.env.gh_report = str;
-      Child.exec(rule.report, childOpts, function(err) {
-        if (err) eventsDebug('Error executing report [%s]: %s', rule.report, err.message)
-      })
-    })
+    if (rule.report) {
+      past.pipe(bl((err, data) => {
+        if (err) {
+          console.error('Cannot buffer executed command output', err)
+        } else {
+          childOpts.env.gh_report = data.toString()
+          childProcess.exec(rule.report, childOpts, function (err) {
+            if (err) {
+              eventsDebug('Error executing report [%s]: %s', rule.report, err.message)
+            }
+          })
+        }
+      }))
+    }
   }
 
   rules.forEach((rule) => {
