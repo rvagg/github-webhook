@@ -231,8 +231,10 @@ function handleRules (logStream, rules, event) {
       }
     })
 
-    cp.stdout.pipe(past)
-    prefixStream(cp.stderr, '! ').pipe(past)
+    if (logStream || rule.report) {
+      cp.stdout.pipe(past)
+      prefixStream(cp.stderr, '! ').pipe(past)
+    }
 
     if (logStream) {
       past.pipe(logStream, { end: false })
