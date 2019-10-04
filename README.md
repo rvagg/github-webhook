@@ -28,7 +28,8 @@ You can also specify a `--config <file>` where *file* is a JSON file containing 
   "rules": [{
     "event": "push",
     "match": "ref == \"refs/heads/master\" && repository.name == \"myrepo\"",
-    "exec": "echo yay!"
+    "exec": "echo yay!",
+    "report": "echo \"${gh_report}\" | mail -s 'Deployed ${gh_repository_name}' \"${gh_pusher_name} <${gh_pusher_email}>\""
   }]
 }
 ```
