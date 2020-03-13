@@ -30,7 +30,7 @@
     "debug": "~4.1.1",
     "github-webhook-handler": "~1.0.0",
     "matchme": "~2.0.1",
-    "minimist": "~1.1.1",
+    "minimist": "~1.2.5",
     "split2": "~3.1.1",
     "through2": "~3.0.1"
   }
