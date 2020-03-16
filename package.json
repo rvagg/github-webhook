@@ -21,17 +21,17 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "bl": "~4.0.0",
-    "standard": "~14.3.1",
-    "supertest": "~4.0.2",
-    "tape": "~4.11.0"
+    "bl": "^4.0.1",
+    "standard": "^14.3.3",
+    "supertest": "^4.0.2",
+    "tape": "^4.13.2"
   },
   "dependencies": {
-    "debug": "~4.1.1",
-    "github-webhook-handler": "~1.0.0",
-    "matchme": "~2.0.1",
-    "minimist": "~1.1.1",
-    "split2": "~3.1.1",
-    "through2": "~3.0.1"
+    "debug": "^4.1.1",
+    "github-webhook-handler": "^1.0.0",
+    "matchme": "^2.0.1",
+    "minimist": "^1.2.5",
+    "split2": "^3.1.1",
+    "through2": "^3.0.1"
   }
 }
