@@ -111,6 +111,7 @@ function createServer (options) {
         ? process.stderr
         : fs.createWriteStream(options.log)
   )
+  const queue = []
 
   server.webhookHandler = handler
 
@@ -146,7 +147,7 @@ function createServer (options) {
 
   handler.on('*', (event) => {
     eventsDebug(JSON.stringify(event))
-    handleRules(logStream, options.rules, event)
+    handleRules(logStream, options.rules, event, queue)
   })
 
   return server
@@ -188,15 +189,15 @@ function envFromPayload (payload, prefix, env) {
   return env
 }
 
-function handleRules (logStream, rules, event) {
-  function executeRule (rule) {
-    if (rule.executing === true) {
-      rule.queued = true // we're busy working on this rule, queue up another run
-      return
-    }
-
-    rule.executing = true
-
+function handleRules (logStream, rules, event, queue) {
+  function unqueue () {
+    if (queue.executing) return
+    const item = queue.shift()
+    if (!item) return
+    queue.executing = true
+    executeRule(item[0], item[1])
+  }
+  function executeRule (rule, event) {
     const startTs = Date.now()
     const eventStr = `event="${rule.event}", match="${rule.match}", exec="${rule.exec}"`
     const exec = Array.isArray(rule.exec) ? rule.exec : ['sh', '-c', rule.exec]
@@ -219,12 +220,8 @@ function handleRules (logStream, rules, event) {
         logStream.write(new Date() + '\n')
         logStream.write('Took ' + (Date.now() - startTs) + ' ms\n')
       }
-
-      rule.executing = false
-      if (rule.queued === true) {
-        rule.queued = false
-        executeRule(rule) // do it again!
-      }
+      queue.executing = false
+      unqueue()
     })
 
     if (logStream) {
@@ -241,9 +238,9 @@ function handleRules (logStream, rules, event) {
     if (!matchme(event.payload, rule.match)) {
       return
     }
-
-    executeRule(rule)
+    queue.push([rule, event])
   })
+  unqueue()
 }
 
 module.exports = createServer
