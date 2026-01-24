@@ -1,18 +1,23 @@
 #!/usr/bin/env node
 
-const http = require('http')
-const fs = require('fs')
-const spawn = require('child_process').spawn
-const createHandler = require('github-webhook-handler')
-const debug = require('debug')
-const matchme = require('matchme')
-const split2 = require('split2')
-const through2 = require('through2')
-const argv = require('minimist')(process.argv.slice(2))
+import http from 'node:http'
+import fs from 'node:fs'
+import { spawn } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+import createHandler from 'github-webhook-handler'
+import debug from 'debug'
+import matchme from 'matchme'
+import split2 from 'split2'
+import through2 from 'through2'
+import minimist from 'minimist'
+
 const serverDebug = debug('github-webhook:server')
 const eventsDebug = debug('github-webhook:events')
 
-if (require.main === module) {
+const isMain = process.argv[1] === fileURLToPath(import.meta.url)
+
+if (isMain) {
+  const argv = minimist(process.argv.slice(2))
   let config = {}
 
   if (typeof argv.config === 'string') {
@@ -71,7 +76,7 @@ function collectRules (rules) {
   return rules.map((rule) => {
     let c = rule.indexOf(':')
     if (c < 0) {
-      return
+      return null
     }
 
     const event = rule.substring(0, c)
@@ -79,17 +84,17 @@ function collectRules (rules) {
     rule = rule.substring(c + 1)
     c = rule.indexOf(':')
     if (c < 0) {
-      return
+      return null
     }
 
     const match = rule.substring(0, c)
     const exec = rule.substring(c + 1)
 
-    return event && match && exec && {
-      event: event,
-      match: match,
-      exec: exec
+    if (!event || !match || !exec) {
+      return null
     }
+
+    return { event, match, exec }
   }).filter(Boolean)
 }
 
@@ -119,13 +124,17 @@ function createServer (options) {
 
     handler(req, res, (err) => {
       function response (code, msg) {
+        if (res.headersSent) {
+          return
+        }
+
         const address = req.socket.address()
 
-        serverDebug('Response to %s:%s: %d "%s"'
-          , address ? address.address : 'unknown'
-          , address ? address.port : '??'
-          , code
-          , msg
+        serverDebug('Response to %s:%s: %d "%s"',
+          address ? address.address : 'unknown',
+          address ? address.port : '??',
+          code,
+          msg
         )
 
         res.writeHead(code, { 'content-type': 'text/json' })
@@ -163,10 +172,9 @@ function envFromPayload (payload, prefix, env) {
     env = {}
   }
 
+  // Add branch as an env var without mutating the payload
   if (payload.ref && payload.ref.startsWith('refs/heads/')) {
-    payload.branch = payload.ref.substring('refs/heads/'.length)
-  } else {
-    payload.branch = null
+    env[prefix + 'branch'] = payload.ref.substring('refs/heads/'.length)
   }
 
   Object.keys(payload).forEach((k) => {
@@ -246,4 +254,4 @@ function handleRules (logStream, rules, event) {
   })
 }
 
-module.exports = createServer
+export default createServer

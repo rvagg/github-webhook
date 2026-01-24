@@ -1,23 +1,44 @@
 # github-webhook
 
-[![Build Status](https://travis-ci.com/rvagg/github-webhook.svg?branch=master)](https://travis-ci.com/rvagg/github-webhook)
+[![NPM](https://nodei.co/npm/github-webhook.svg?style=flat&data=n,v&color=blue)](https://nodei.co/npm/github-webhook/)
 
-[![NPM](https://nodei.co/npm/github-webhook.svg)](https://nodei.co/npm/github-webhook/)
+A lightweight server that listens for GitHub Webhook events and executes commands when specific conditions are matched. Useful for automated deployments, CI triggers, and other GitHub-driven workflows.
 
-A stand-alone GitHub Webhook end-point server.
+## Installation
 
-## Example
+```sh
+npm install -g github-webhook
+```
 
-```text
+## Quick Start
+
+```sh
 github-webhook \
   --port=9999 \
   --path=/webhook \
   --secret=mygithubsecret \
-  --log=/var/log/webhook.log \
-  --rule='push:ref == refs/heads/master && repository.name == myrepo:echo "yay!"'
+  --rule='push:ref == "refs/heads/master" && repository.name == "myrepo":./deploy.sh'
 ```
 
-You can also specify a `--config <file>` where *file* is a JSON file containing the same properties as are available as commandline options. The commandline will always override properties in the config file though.
+Then configure your GitHub repository's webhook settings to point to `http://yourserver:9999/webhook` with the matching secret.
+
+## Configuration
+
+You can configure github-webhook via command-line arguments or a JSON config file (or both - command-line overrides the config file).
+
+### Command-line
+
+```sh
+github-webhook \
+  --config=/etc/github-webhook.json \
+  --port=9999 \
+  --path=/webhook \
+  --secret=mygithubsecret \
+  --log=/var/log/webhook.log \
+  --rule='push:ref == "refs/heads/master":./deploy.sh'
+```
+
+### Config file
 
 ```json
 {
@@ -25,40 +46,182 @@ You can also specify a `--config <file>` where *file* is a JSON file containing 
   "path": "/webhook",
   "secret": "mygithubsecret",
   "log": "/var/log/webhook.log",
-  "rules": [{
-    "event": "push",
-    "match": "ref == \"refs/heads/master\" && repository.name == \"myrepo\"",
-    "exec": "echo yay!"
-  }]
+  "rules": [
+    {
+      "event": "push",
+      "match": "ref == \"refs/heads/master\" && repository.full_name == \"myuser/myrepo\"",
+      "exec": "/var/www/deploy.sh"
+    }
+  ]
 }
 ```
 
-## Options
+### Options
 
-* **port** (required): the port for the server to listen to (also respects `PORT` env var), should match what you tell GitHub
-* **path** (required): the path / route to listen to webhook requests on, should match what you tell GitHub
-* **secret** (required): the key used to hash the payload by GitHub that we verify against, should match what you tell GitHub
-* **host** (optional): if you want to restrict `listen()` to a specific host
-* **log** (optional): a file to print logs to, each command execution will be logged, also note that you can set the `DEBUG` env var to see debug output (see [debug](https://github.com/visionmedia/debug)). Note that the special strings 'stdout' and 'stderr' will redirect log output to standard out and standard error respectively rather than files with those names.
-* **rules** (optional): an array of objects representing rules to match against and commands to execute, can also be supplied as individual `--rule` commandline arguments where the 3 properties are separated by `:` (details below)
+| Option | Required | Description |
+|--------|----------|-------------|
+| `port` | Yes | Port to listen on (also respects `PORT` env var) |
+| `path` | Yes | URL path to receive webhooks (e.g., `/webhook`) |
+| `secret` | Yes | Webhook secret for payload verification (configure the same value in GitHub) |
+| `host` | No | Bind to a specific host/IP address |
+| `log` | No | Log file path, or `stdout`/`stderr` for console output |
+| `rules` | No | Array of rules to match and execute (see below) |
 
-### Rules
+## Rules
 
-When reacting to valid GitHub Webhook payloads, you can specify any number of rules that will be matched and execute commands in a forked shell. Rules have three components:
+Rules define what commands to execute when specific webhook events are received.
 
-* `"event"`: the event type to match, see the [GitHub Webhooks documentation](https://developer.github.com/webhooks/) for more details on the events you can receive
-* `"match"`: a basic object matching rule that will be applied against the payload received from GitHub. Should be flexible enough to match very specific parts of the PayLoad. See [matchme](https://github.com/DamonOehlman/matchme) for how this works.
-* `"exec"`: a system command to execute if this rule is matched, should obviously be something related to the event, perhaps a deploy on `"push"` events? **Note**: if you provide a string it will be run with `sh -c "<string>"` (unlikely to be Windows-friendly), however if you provide an array of strings then the first element will be executed with the remaining elements as its arguments.
+### Rule properties
 
-You can either specify these rules in an array on the `"rules"` property in the config file, or as separate `--rule` commandline arguments where the components are separated by `:`, e.g.: `--rule event:match:exec` (you will generally want to quote the rule to prevent shell trickery).
+| Property | Description |
+|----------|-------------|
+| `event` | GitHub event type to match (`push`, `pull_request`, `issues`, etc.). Use `*` to match all events. See [GitHub Webhooks documentation](https://docs.github.com/en/webhooks) for available events. |
+| `match` | Expression to match against the webhook payload. Uses [matchme](https://github.com/DamonOehlman/matchme) syntax. |
+| `exec` | Command to execute. A string runs via `sh -c "..."`. An array executes directly (first element is the command, rest are arguments). |
 
-## Programatic usage
+### Command-line rule syntax
 
-You can `var server = require('github-webhook')(options)` and you'll receive a `http.Server` object that has been prepared but not started.
+Rules can be specified on the command line as `--rule 'event:match:exec'`:
 
-## More information
+```sh
+--rule 'push:ref == "refs/heads/master":./deploy.sh'
+```
 
-**github-webhook** is powered by [github-webhook-handler](https://github.com/rvagg/github-webhook-handler), see that for more details.
+### Environment variables
+
+Commands receive the entire webhook payload as environment variables with a `gh_` prefix:
+
+- `gh_ref` - The git ref (e.g., `refs/heads/master`)
+- `gh_branch` - The branch name (extracted from ref for convenience)
+- `gh_repository_name` - Repository name
+- `gh_repository_full_name` - Full repository name (e.g., `owner/repo`)
+- `gh_sender_login` - Username of the person who triggered the event
+- ... and all other payload fields
+
+Nested objects become underscore-separated (e.g., `gh_repository_owner_login`).
+
+### Example rules
+
+Deploy on push to master:
+```json
+{
+  "event": "push",
+  "match": "ref == \"refs/heads/master\" && repository.full_name == \"myuser/myrepo\"",
+  "exec": "/var/www/deploy.sh"
+}
+```
+
+Run tests on pull request:
+```json
+{
+  "event": "pull_request",
+  "match": "action == \"opened\" || action == \"synchronize\"",
+  "exec": ["./run-tests.sh", "--pr"]
+}
+```
+
+Log all events:
+```json
+{
+  "event": "*",
+  "match": "true",
+  "exec": "echo \"Received $gh_event\" >> /var/log/webhooks.log"
+}
+```
+
+## Running as a Service
+
+### systemd (recommended)
+
+Create `/etc/systemd/system/github-webhook.service`:
+
+```ini
+[Unit]
+Description=GitHub Webhook Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+ExecStart=/usr/bin/github-webhook --config /etc/github-webhook.json
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then enable and start:
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl enable github-webhook
+sudo systemctl start github-webhook
+sudo systemctl status github-webhook
+```
+
+View logs:
+
+```sh
+sudo journalctl -u github-webhook -f
+```
+
+### Running behind a reverse proxy
+
+For production, run github-webhook behind nginx or another reverse proxy that handles TLS:
+
+```nginx
+location /webhook {
+    proxy_pass http://127.0.0.1:9999;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+```
+
+Then configure github-webhook with `--host=127.0.0.1` to only accept local connections.
+
+## Programmatic Usage
+
+```js
+import webhook from 'github-webhook'
+
+const server = webhook({
+  port: 9999,
+  path: '/webhook',
+  secret: 'mygithubsecret',
+  rules: [
+    {
+      event: 'push',
+      match: 'ref == "refs/heads/master"',
+      exec: './deploy.sh'
+    }
+  ]
+})
+
+server.listen(9999, () => {
+  console.log('Webhook server listening on port 9999')
+})
+```
+
+The function returns an `http.Server` instance with an attached `webhookHandler` for custom event handling:
+
+```js
+server.webhookHandler.on('push', (event) => {
+  console.log('Push event:', event.payload)
+})
+```
+
+## Debugging
+
+Enable debug output with the `DEBUG` environment variable:
+
+```sh
+DEBUG=github-webhook:* github-webhook --config /etc/github-webhook.json
+```
+
+## More Information
+
+**github-webhook** is powered by [github-webhook-handler](https://github.com/rvagg/github-webhook-handler).
 
 ## License
 

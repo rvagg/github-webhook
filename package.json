@@ -2,10 +2,16 @@
   "name": "github-webhook",
   "version": "2.0.2",
   "description": "A flexible web server for reacting GitHub Webhooks",
+  "type": "module",
   "main": "github-webhook.js",
+  "exports": "./github-webhook.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "lint": "standard *.js",
-    "test": "npm run lint && node test.js"
+    "lint": "standard",
+    "test:unit": "node --test test.js",
+    "test": "npm run lint && npm run test:unit"
   },
   "bin": {
     "github-webhook": "./github-webhook.js"
@@ -21,17 +27,103 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "bl": "^4.0.1",
-    "standard": "^14.3.3",
-    "supertest": "^4.0.2",
-    "tape": "^4.13.2"
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.0",
+    "@semantic-release/npm": "^13.0.0",
+    "@semantic-release/release-notes-generator": "^14.0.1",
+    "conventional-changelog-conventionalcommits": "^9.0.0",
+    "semantic-release": "^25.0.0",
+    "standard": "^17.1.2"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.4.3",
     "github-webhook-handler": "^1.0.0",
     "matchme": "^2.0.1",
-    "minimist": "^1.2.5",
-    "split2": "^3.1.1",
-    "through2": "^3.0.1"
+    "minimist": "^1.2.8",
+    "split2": "^4.2.0",
+    "through2": "^4.0.2"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits",
+          "releaseRules": [
+            {
+              "breaking": true,
+              "release": "major"
+            },
+            {
+              "revert": true,
+              "release": "patch"
+            },
+            {
+              "type": "feat",
+              "release": "minor"
+            },
+            {
+              "type": "fix",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "release": "patch"
+            },
+            {
+              "type": "docs",
+              "release": "patch"
+            },
+            {
+              "type": "test",
+              "release": "patch"
+            },
+            {
+              "scope": "no-release",
+              "release": false
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": "Features"
+              },
+              {
+                "type": "fix",
+                "section": "Bug Fixes"
+              },
+              {
+                "type": "chore",
+                "section": "Trivial Changes"
+              },
+              {
+                "type": "docs",
+                "section": "Trivial Changes"
+              },
+              {
+                "type": "test",
+                "section": "Tests"
+              }
+            ]
+          }
+        }
+      ],
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ]
   }
 }
