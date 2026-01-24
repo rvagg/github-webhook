@@ -14,7 +14,16 @@ import minimist from 'minimist'
 const serverDebug = debug('github-webhook:server')
 const eventsDebug = debug('github-webhook:events')
 
-const isMain = process.argv[1] === fileURLToPath(import.meta.url)
+// Handle symlinks (npm global install creates symlinks)
+function resolveRealPath (p) {
+  try {
+    return fs.realpathSync(p)
+  } catch {
+    return p
+  }
+}
+
+const isMain = resolveRealPath(process.argv[1]) === fileURLToPath(import.meta.url)
 
 if (isMain) {
   const argv = minimist(process.argv.slice(2))
