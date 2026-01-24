@@ -1,0 +1,46 @@
+name: Test & Maybe Release
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [lts/*, current]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install Dependencies
+        run: npm install --no-progress
+      - name: Run tests
+        run: npm test
+  release:
+    name: Release
+    permissions:
+      contents: write
+      id-token: write
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        run: npm install --no-progress
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: npx semantic-release
