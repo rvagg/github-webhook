@@ -1,3 +1,9 @@
+## [3.0.2](https://github.com/rvagg/github-webhook/compare/v3.0.1...v3.0.2) (2026-01-28)
+
+### Trivial Changes
+
+* **deps:** update deps ([#24](https://github.com/rvagg/github-webhook/issues/24)) ([90fab2b](https://github.com/rvagg/github-webhook/commit/90fab2b80fb20b1f176d60e62619fa3bad63192d))
+
 ## [3.0.1](https://github.com/rvagg/github-webhook/compare/v3.0.0...v3.0.1) (2026-01-24)
 
 ### Bug Fixes
