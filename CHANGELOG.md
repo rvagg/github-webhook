@@ -1,3 +1,11 @@
+## [3.0.3](https://github.com/rvagg/github-webhook/compare/v3.0.2...v3.0.3) (2026-02-06)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/github from 12.0.2 to 12.0.3 ([#27](https://github.com/rvagg/github-webhook/issues/27)) ([80297fb](https://github.com/rvagg/github-webhook/commit/80297fb2eed85cbfb73466f1d712dad4fd60bdaa))
+* **deps-dev:** bump semantic-release from 25.0.2 to 25.0.3 ([#25](https://github.com/rvagg/github-webhook/issues/25)) ([27783f0](https://github.com/rvagg/github-webhook/commit/27783f02c775b26b57704b5350abe3e54d1839b0))
+* **deps:** bump github-webhook-handler from 2.0.0 to 2.1.0 ([#26](https://github.com/rvagg/github-webhook/issues/26)) ([921e22a](https://github.com/rvagg/github-webhook/commit/921e22a72af178f4318ea1ba907693c38cb2c1bc))
+
 ## [3.0.2](https://github.com/rvagg/github-webhook/compare/v3.0.1...v3.0.2) (2026-01-28)
 
 ### Trivial Changes
