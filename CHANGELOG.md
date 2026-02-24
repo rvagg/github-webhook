@@ -1,3 +1,9 @@
+## [3.0.6](https://github.com/rvagg/github-webhook/compare/v3.0.5...v3.0.6) (2026-02-24)
+
+### Trivial Changes
+
+* **deps:** bump tar and npm ([#32](https://github.com/rvagg/github-webhook/issues/32)) ([7705f2a](https://github.com/rvagg/github-webhook/commit/7705f2aded39d5a23c668db4e9b3cc08a5871f53))
+
 ## [3.0.5](https://github.com/rvagg/github-webhook/compare/v3.0.4...v3.0.5) (2026-02-23)
 
 ### Trivial Changes
