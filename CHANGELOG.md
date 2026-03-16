@@ -1,3 +1,10 @@
+## [3.0.9](https://github.com/rvagg/github-webhook/compare/v3.0.8...v3.0.9) (2026-03-16)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/npm from 13.1.4 to 13.1.5 ([#35](https://github.com/rvagg/github-webhook/issues/35)) ([627b23c](https://github.com/rvagg/github-webhook/commit/627b23c993c7a6199a02c70af6e37f08a5e394b3))
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#36](https://github.com/rvagg/github-webhook/issues/36)) ([3351787](https://github.com/rvagg/github-webhook/commit/3351787a4c19bf4b099032e0c8993f6e697d634e))
+
 ## [3.0.8](https://github.com/rvagg/github-webhook/compare/v3.0.7...v3.0.8) (2026-03-16)
 
 ### Trivial Changes
