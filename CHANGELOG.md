@@ -1,3 +1,9 @@
+## [3.0.10](https://github.com/rvagg/github-webhook/compare/v3.0.9...v3.0.10) (2026-03-16)
+
+### Trivial Changes
+
+* **deps-dev:** bump minimatch from 3.1.2 to 3.1.5 ([#34](https://github.com/rvagg/github-webhook/issues/34)) ([13881d7](https://github.com/rvagg/github-webhook/commit/13881d75c747d768dc4d1668ec4987c7b3d7d3b0))
+
 ## [3.0.9](https://github.com/rvagg/github-webhook/compare/v3.0.8...v3.0.9) (2026-03-16)
 
 ### Trivial Changes
