@@ -1,3 +1,9 @@
+## [3.0.11](https://github.com/rvagg/github-webhook/compare/v3.0.10...v3.0.11) (2026-03-23)
+
+### Trivial Changes
+
+* **deps-dev:** bump flatted from 3.3.3 to 3.4.2 ([#39](https://github.com/rvagg/github-webhook/issues/39)) ([360b8da](https://github.com/rvagg/github-webhook/commit/360b8dac04a69cbab4edcece01390cf57db5e375))
+
 ## [3.0.10](https://github.com/rvagg/github-webhook/compare/v3.0.9...v3.0.10) (2026-03-16)
 
 ### Trivial Changes
