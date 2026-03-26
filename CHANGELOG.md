@@ -1,3 +1,9 @@
+## [3.0.12](https://github.com/rvagg/github-webhook/compare/v3.0.11...v3.0.12) (2026-03-26)
+
+### Trivial Changes
+
+* **deps:** bump picomatch ([#40](https://github.com/rvagg/github-webhook/issues/40)) ([9d02438](https://github.com/rvagg/github-webhook/commit/9d02438d024d32de3b1c90d215354f0aa661f022))
+
 ## [3.0.11](https://github.com/rvagg/github-webhook/compare/v3.0.10...v3.0.11) (2026-03-23)
 
 ### Trivial Changes
