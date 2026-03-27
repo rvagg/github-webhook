@@ -1,3 +1,9 @@
+## [3.0.13](https://github.com/rvagg/github-webhook/compare/v3.0.12...v3.0.13) (2026-03-27)
+
+### Trivial Changes
+
+* **deps-dev:** bump handlebars from 4.7.8 to 4.7.9 ([#41](https://github.com/rvagg/github-webhook/issues/41)) ([8653194](https://github.com/rvagg/github-webhook/commit/8653194af89e387f4ab17abeba43ec701428fdb2))
+
 ## [3.0.12](https://github.com/rvagg/github-webhook/compare/v3.0.11...v3.0.12) (2026-03-26)
 
 ### Trivial Changes
