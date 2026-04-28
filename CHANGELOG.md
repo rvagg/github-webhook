@@ -1,3 +1,11 @@
+## [3.0.14](https://github.com/rvagg/github-webhook/compare/v3.0.13...v3.0.14) (2026-04-28)
+
+### Trivial Changes
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#44](https://github.com/rvagg/github-webhook/issues/44)) ([1ebead1](https://github.com/rvagg/github-webhook/commit/1ebead1172dbf0787409f1b7440267734030f877))
+* **deps:** bump github-webhook-handler from 2.1.0 to 2.1.1 ([#45](https://github.com/rvagg/github-webhook/issues/45)) ([d9929a6](https://github.com/rvagg/github-webhook/commit/d9929a61da6d40d7ac552d79e4786cb6d15e2c70))
+* **deps:** bump lodash from 4.17.23 to 4.18.1 ([#43](https://github.com/rvagg/github-webhook/issues/43)) ([8cd31f0](https://github.com/rvagg/github-webhook/commit/8cd31f08cbac266c5c4941e03d3a750a9c646e9a))
+
 ## [3.0.13](https://github.com/rvagg/github-webhook/compare/v3.0.12...v3.0.13) (2026-03-27)
 
 ### Trivial Changes
