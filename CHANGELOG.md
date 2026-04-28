@@ -1,3 +1,9 @@
+## [3.0.15](https://github.com/rvagg/github-webhook/compare/v3.0.14...v3.0.15) (2026-04-28)
+
+### Trivial Changes
+
+* **deps-dev:** bump lodash-es from 4.17.23 to 4.18.1 ([#42](https://github.com/rvagg/github-webhook/issues/42)) ([61c30ac](https://github.com/rvagg/github-webhook/commit/61c30ac407b121376df798295293acb14fdac700))
+
 ## [3.0.14](https://github.com/rvagg/github-webhook/compare/v3.0.13...v3.0.14) (2026-04-28)
 
 ### Trivial Changes
