@@ -1,3 +1,9 @@
+## [3.0.16](https://github.com/rvagg/github-webhook/compare/v3.0.15...v3.0.16) (2026-05-11)
+
+### Trivial Changes
+
+* **deps:** bump github-webhook-handler from 2.1.1 to 2.1.4 ([#46](https://github.com/rvagg/github-webhook/issues/46)) ([31b5bea](https://github.com/rvagg/github-webhook/commit/31b5beadb3c0d97c521634d1479228d8ad8b8f44))
+
 ## [3.0.15](https://github.com/rvagg/github-webhook/compare/v3.0.14...v3.0.15) (2026-04-28)
 
 ### Trivial Changes
