@@ -1,3 +1,9 @@
+## [3.0.19](https://github.com/rvagg/github-webhook/compare/v3.0.18...v3.0.19) (2026-05-25)
+
+### Trivial Changes
+
+* **deps:** bump through2 from 5.0.0 to 5.0.1 ([#50](https://github.com/rvagg/github-webhook/issues/50)) ([dfa303a](https://github.com/rvagg/github-webhook/commit/dfa303a292690e266dc74d2a26d01dce6acd6d59))
+
 ## [3.0.18](https://github.com/rvagg/github-webhook/compare/v3.0.17...v3.0.18) (2026-05-15)
 
 ### Trivial Changes
