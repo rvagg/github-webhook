@@ -1,3 +1,10 @@
+## [3.0.21](https://github.com/rvagg/github-webhook/compare/v3.0.20...v3.0.21) (2026-06-22)
+
+### Trivial Changes
+
+* **deps-dev:** bump semantic-release from 25.0.3 to 25.0.5 ([#53](https://github.com/rvagg/github-webhook/issues/53)) ([0765d01](https://github.com/rvagg/github-webhook/commit/0765d013a935a675740332bcd8a5c0a78a752941))
+* **deps:** bump actions/checkout from 6 to 6.0.3 ([#54](https://github.com/rvagg/github-webhook/issues/54)) ([9cb9713](https://github.com/rvagg/github-webhook/commit/9cb971372ecaf3a4a86ced56db91d95ccb15cccd))
+
 ## [3.0.20](https://github.com/rvagg/github-webhook/compare/v3.0.19...v3.0.20) (2026-06-22)
 
 ### Trivial Changes
