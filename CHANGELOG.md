@@ -1,3 +1,9 @@
+## [3.0.25](https://github.com/rvagg/github-webhook/compare/v3.0.24...v3.0.25) (2026-06-29)
+
+### Trivial Changes
+
+* **deps:** bump actions/checkout from 6.0.3 to 7.0.0 ([#58](https://github.com/rvagg/github-webhook/issues/58)) ([62d4288](https://github.com/rvagg/github-webhook/commit/62d4288ed7da67b44fea5eb9700d1f51ed696187))
+
 ## [3.0.24](https://github.com/rvagg/github-webhook/compare/v3.0.23...v3.0.24) (2026-06-22)
 
 ### Trivial Changes
