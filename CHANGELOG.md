@@ -1,3 +1,5 @@
+## [3.0.28](https://github.com/rvagg/github-webhook/compare/v3.0.27...v3.0.28) (2026-07-18)
+
 ## [3.0.27](https://github.com/rvagg/github-webhook/compare/v3.0.26...v3.0.27) (2026-07-13)
 
 ## [3.0.26](https://github.com/rvagg/github-webhook/compare/v3.0.25...v3.0.26) (2026-07-04)
