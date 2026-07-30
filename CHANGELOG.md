@@ -1,16 +1,50 @@
 ## [3.0.32](https://github.com/rvagg/github-webhook/compare/v3.0.31...v3.0.32) (2026-07-27)
 
+### Trivial Changes
+
+* **deps:** bump the github-actions-minor-patch group with 3 updates ([#74](https://github.com/rvagg/github-webhook/issues/74)) ([9a24d28](https://github.com/rvagg/github-webhook/commit/9a24d2812902991ce4aeb7cf33cbd11f1fa3af7f))
+
 ## [3.0.31](https://github.com/rvagg/github-webhook/compare/v3.0.30...v3.0.31) (2026-07-21)
+
+### Trivial Changes
+
+* **deps:** bump tar and npm ([#73](https://github.com/rvagg/github-webhook/issues/73)) ([4b73c9f](https://github.com/rvagg/github-webhook/commit/4b73c9f98b32d78794f301759b1546a4c70fc7d8))
 
 ## [3.0.30](https://github.com/rvagg/github-webhook/compare/v3.0.29...v3.0.30) (2026-07-21)
 
+### Trivial Changes
+
+* **ci:** update to single depsound-action workflow v0.3 ([#72](https://github.com/rvagg/github-webhook/issues/72)) ([61fe8fe](https://github.com/rvagg/github-webhook/commit/61fe8fed353416bc15f3d9d29088e7a2d51ad6fc))
+
 ## [3.0.29](https://github.com/rvagg/github-webhook/compare/v3.0.28...v3.0.29) (2026-07-18)
+
+### Trivial Changes
+
+* **deps:** bump actions/setup-node from 6.5.0 to 7.0.0 ([#70](https://github.com/rvagg/github-webhook/issues/70)) ([e5b6028](https://github.com/rvagg/github-webhook/commit/e5b60282faa5c666edd72f41fd6121c2e9e202cb))
+* **deps:** bump the npm-minor-patch group with 2 updates ([#71](https://github.com/rvagg/github-webhook/issues/71)) ([85c4083](https://github.com/rvagg/github-webhook/commit/85c408373371da573a039e40d004aa4c3dd79cdb))
 
 ## [3.0.28](https://github.com/rvagg/github-webhook/compare/v3.0.27...v3.0.28) (2026-07-18)
 
+### Trivial Changes
+
+* **ci:** tweak dependabot, add depsound, use sha refs ([#69](https://github.com/rvagg/github-webhook/issues/69)) ([a965c42](https://github.com/rvagg/github-webhook/commit/a965c42e5941dcbc5a6edb6ea632a4165c7231d9))
+
 ## [3.0.27](https://github.com/rvagg/github-webhook/compare/v3.0.26...v3.0.27) (2026-07-13)
 
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/github from 12.0.8 to 12.0.9 ([#64](https://github.com/rvagg/github-webhook/issues/64)) ([2dd58b0](https://github.com/rvagg/github-webhook/commit/2dd58b00f7d624c120906660be17ef00a6eb5173))
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#63](https://github.com/rvagg/github-webhook/issues/63)) ([68fbdfe](https://github.com/rvagg/github-webhook/commit/68fbdfe5e5ecf10f3c72a884d92f269d838b2a82))
+* **deps:** bump github-webhook-handler from 2.1.7 to 2.1.8 ([#62](https://github.com/rvagg/github-webhook/issues/62)) ([5b13f8c](https://github.com/rvagg/github-webhook/commit/5b13f8c8521d6b9be0c272c41b94cebd673bf682))
+* **deps:** bump through2 from 5.0.3 to 5.0.5 ([#65](https://github.com/rvagg/github-webhook/issues/65)) ([bcd0212](https://github.com/rvagg/github-webhook/commit/bcd02129ba27fd4acada3e12b9120346e5a5f463))
+
 ## [3.0.26](https://github.com/rvagg/github-webhook/compare/v3.0.25...v3.0.26) (2026-07-04)
+
+### Trivial Changes
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#61](https://github.com/rvagg/github-webhook/issues/61)) ([6bfc4c1](https://github.com/rvagg/github-webhook/commit/6bfc4c18ac09a191e489c22c3005e7a427be649b))
+* **deps:** bump github-webhook-handler from 2.1.5 to 2.1.7 ([#60](https://github.com/rvagg/github-webhook/issues/60)) ([e799394](https://github.com/rvagg/github-webhook/commit/e7993942f3d09eb23c9f6db113f667d504cd338d))
+* **deps:** bump through2 from 5.0.1 to 5.0.3 ([#59](https://github.com/rvagg/github-webhook/issues/59)) ([9592468](https://github.com/rvagg/github-webhook/commit/9592468bc24066b2a8500856f70e5d050fe34256))
 
 ## [3.0.25](https://github.com/rvagg/github-webhook/compare/v3.0.24...v3.0.25) (2026-06-29)
 
