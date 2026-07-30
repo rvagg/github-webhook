@@ -1,3 +1,9 @@
+## [3.0.33](https://github.com/rvagg/github-webhook/compare/v3.0.32...v3.0.33) (2026-07-30)
+
+### Trivial Changes
+
+* downgrade changelog maker, backfill missing entries ([#75](https://github.com/rvagg/github-webhook/issues/75)) ([7311dc9](https://github.com/rvagg/github-webhook/commit/7311dc9610698b19684d8294a88319e05b27ea42))
+
 ## [3.0.32](https://github.com/rvagg/github-webhook/compare/v3.0.31...v3.0.32) (2026-07-27)
 
 ### Trivial Changes
