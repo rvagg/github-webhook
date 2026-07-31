@@ -1,3 +1,9 @@
+## [3.0.34](https://github.com/rvagg/github-webhook/compare/v3.0.33...v3.0.34) (2026-07-31)
+
+### Trivial Changes
+
+* **deps:** bump the github-actions-minor-patch group with 2 updates ([#76](https://github.com/rvagg/github-webhook/issues/76)) ([c78a6e9](https://github.com/rvagg/github-webhook/commit/c78a6e9361e995bb19bd953b3f3ff94766e6da89))
+
 ## [3.0.33](https://github.com/rvagg/github-webhook/compare/v3.0.32...v3.0.33) (2026-07-30)
 
 ### Trivial Changes
