@@ -1,3 +1,9 @@
+## [3.0.36](https://github.com/rvagg/github-webhook/compare/v3.0.35...v3.0.36) (2026-08-03)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/changelog from 6.0.3 to 7.0.0 ([#80](https://github.com/rvagg/github-webhook/issues/80)) ([8ea99fb](https://github.com/rvagg/github-webhook/commit/8ea99fbe69fd63a7cc7f69341b6a4ae330cd71a9))
+
 ## [3.0.35](https://github.com/rvagg/github-webhook/compare/v3.0.34...v3.0.35) (2026-08-03)
 
 ### Trivial Changes
