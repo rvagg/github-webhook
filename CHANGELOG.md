@@ -1,3 +1,9 @@
+## [3.0.35](https://github.com/rvagg/github-webhook/compare/v3.0.34...v3.0.35) (2026-08-03)
+
+### Trivial Changes
+
+* **deps:** bump the npm-minor-patch group with 3 updates ([#77](https://github.com/rvagg/github-webhook/issues/77)) ([c2af8cb](https://github.com/rvagg/github-webhook/commit/c2af8cb8e77ad16727450ce35eb123d1770314e9))
+
 ## [3.0.34](https://github.com/rvagg/github-webhook/compare/v3.0.33...v3.0.34) (2026-07-31)
 
 ### Trivial Changes
