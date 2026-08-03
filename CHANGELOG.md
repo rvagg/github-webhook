@@ -1,3 +1,9 @@
+## [3.0.37](https://github.com/rvagg/github-webhook/compare/v3.0.36...v3.0.37) (2026-08-03)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/git from 10.0.1 to 11.0.1 ([#79](https://github.com/rvagg/github-webhook/issues/79)) ([7691040](https://github.com/rvagg/github-webhook/commit/7691040663346bb128b0066dcb6dff57bdcef7b0))
+
 ## [3.0.36](https://github.com/rvagg/github-webhook/compare/v3.0.35...v3.0.36) (2026-08-03)
 
 ### Trivial Changes
