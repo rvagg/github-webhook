@@ -1,3 +1,9 @@
+## [3.0.43](https://github.com/rvagg/github-webhook/compare/v3.0.42...v3.0.43) (2026-09-16)
+
+### Trivial Changes
+
+* **deps-dev:** bump js-yaml from 4.3.1 to 4.3.2 ([#87](https://github.com/rvagg/github-webhook/issues/87)) ([babf555](https://github.com/rvagg/github-webhook/commit/babf555b908df08f18942a7ea22e7e243903e535))
+
 ## [3.0.42](https://github.com/rvagg/github-webhook/compare/v3.0.41...v3.0.42) (2026-09-08)
 
 ### Trivial Changes
