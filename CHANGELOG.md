@@ -1,3 +1,9 @@
+## [3.0.45](https://github.com/rvagg/github-webhook/compare/v3.0.44...v3.0.45) (2026-10-02)
+
+### Trivial Changes
+
+* **deps-dev:** bump the npm-minor-patch group across 1 directory with 2 updates ([#88](https://github.com/rvagg/github-webhook/issues/88)) ([1b18e8e](https://github.com/rvagg/github-webhook/commit/1b18e8e7cf9fa1b7aa4a0495e28a902af3796128))
+
 ## [3.0.44](https://github.com/rvagg/github-webhook/compare/v3.0.43...v3.0.44) (2026-10-02)
 
 ### Trivial Changes
