@@ -1,3 +1,10 @@
+## [3.0.47](https://github.com/rvagg/github-webhook/compare/v3.0.46...v3.0.47) (2026-10-19)
+
+### Trivial Changes
+
+* **deps-dev:** bump handlebars from 4.7.9 to 4.7.10 ([#93](https://github.com/rvagg/github-webhook/issues/93)) ([5fd14a6](https://github.com/rvagg/github-webhook/commit/5fd14a65b836109870fac9357e318f2d379847fd))
+* **deps:** bump actions/setup-node ([#92](https://github.com/rvagg/github-webhook/issues/92)) ([ca93827](https://github.com/rvagg/github-webhook/commit/ca938271cc66953a64d96bc8716ddbb652bcd006))
+
 ## [3.0.46](https://github.com/rvagg/github-webhook/compare/v3.0.45...v3.0.46) (2026-10-02)
 
 ### Trivial Changes
