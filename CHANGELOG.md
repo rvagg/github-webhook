@@ -1,3 +1,9 @@
+## [3.0.48](https://github.com/rvagg/github-webhook/compare/v3.0.47...v3.0.48) (2026-10-30)
+
+### Trivial Changes
+
+* **deps:** bump undici ([#94](https://github.com/rvagg/github-webhook/issues/94)) ([98238cc](https://github.com/rvagg/github-webhook/commit/98238cc7f321543dbd069ec012624093a5819892))
+
 ## [3.0.47](https://github.com/rvagg/github-webhook/compare/v3.0.46...v3.0.47) (2026-10-19)
 
 ### Trivial Changes
