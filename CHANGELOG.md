@@ -1,3 +1,9 @@
+## [3.1.0](https://github.com/rvagg/github-webhook/compare/v3.0.52...v3.1.0) (2026-11-27)
+
+### Features
+
+* exit on SIGINT/SIGTERM, log unmatched events ([#100](https://github.com/rvagg/github-webhook/issues/100)) ([cf27f31](https://github.com/rvagg/github-webhook/commit/cf27f317b8a4664126fc2546ab9e236f41e58f97)), closes [#4](https://github.com/rvagg/github-webhook/issues/4) [#7](https://github.com/rvagg/github-webhook/issues/7)
+
 ## [3.0.52](https://github.com/rvagg/github-webhook/compare/v3.0.51...v3.0.52) (2026-11-27)
 
 ### Bug Fixes
