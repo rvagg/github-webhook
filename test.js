@@ -222,3 +222,35 @@ test('array exec rule runs repeatedly', { skip: process.platform === 'win32' }, 
   server.webhookHandler.emit('*', { event: 'push', payload: { n: 2 } })
   assert.deepStrictEqual(await waitForLines(out, 2), ['1', '2'])
 })
+
+test('rule recovers when spawn throws', { skip: process.platform === 'win32' }, async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-webhook-'))
+  t.after(() => fs.rmSync(dir, { recursive: true }))
+  const out = path.join(dir, 'out')
+  const server = webhook({
+    port: 0,
+    path: '/webhook',
+    secret: 'foofaa',
+    rules: [{ event: 'push', match: 'true', exec: `echo "$gh_n" >> ${out}` }]
+  })
+
+  // env values can't contain NUL
+  server.webhookHandler.emit('*', { event: 'push', payload: { n: 'a\u0000b' } })
+  server.webhookHandler.emit('*', { event: 'push', payload: { n: 2 } })
+  assert.deepStrictEqual(await waitForLines(out, 1), ['2'])
+})
+
+test('rule with large output completes without a log', { skip: process.platform === 'win32' }, async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-webhook-'))
+  t.after(() => fs.rmSync(dir, { recursive: true }))
+  const out = path.join(dir, 'out')
+  const server = webhook({
+    port: 0,
+    path: '/webhook',
+    secret: 'foofaa',
+    rules: [{ event: 'push', match: 'true', exec: `head -c 1000000 /dev/zero; echo "$gh_n" >> ${out}` }]
+  })
+
+  server.webhookHandler.emit('*', { event: 'push', payload: { n: 1 } })
+  assert.deepStrictEqual(await waitForLines(out, 1), ['1'])
+})
