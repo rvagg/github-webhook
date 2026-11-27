@@ -220,9 +220,28 @@ function executeRule (logStream, rule, event) {
 
   eventsDebug('Matched rule for %s', eventStr)
 
-  const cp = spawn(cmd, args, {
-    env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env)
-  })
+  function finish () {
+    rule.executing = false
+    const pending = rule.pending
+    if (pending) {
+      rule.pending = null
+      executeRule(logStream, rule, pending)
+    }
+  }
+
+  let cp
+  try {
+    cp = spawn(cmd, args, {
+      env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env),
+      // unread pipes fill and block the child
+      stdio: logStream ? 'pipe' : 'ignore'
+    })
+  } catch (err) {
+    // invalid arguments or env (e.g. a NUL byte in a payload value) throw synchronously
+    eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
+    finish()
+    return
+  }
 
   cp.on('error', (err) => {
     return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
@@ -237,12 +256,7 @@ function executeRule (logStream, rule, event) {
       logStream.write('Took ' + (Date.now() - startTs) + ' ms\n')
     }
 
-    rule.executing = false
-    const pending = rule.pending
-    if (pending) {
-      rule.pending = null
-      executeRule(logStream, rule, pending)
-    }
+    finish()
   })
 
   if (logStream) {
