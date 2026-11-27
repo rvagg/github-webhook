@@ -205,51 +205,53 @@ function envFromPayload (payload, prefix, env) {
   return env
 }
 
-function handleRules (logStream, rules, event) {
-  function executeRule (rule) {
-    if (rule.executing === true) {
-      rule.queued = true // we're busy working on this rule, queue up another run
-      return
-    }
-
-    rule.executing = true
-
-    const startTs = Date.now()
-    const eventStr = `event="${rule.event}", match="${rule.match}", exec="${rule.exec}"`
-    const exec = Array.isArray(rule.exec) ? rule.exec : ['sh', '-c', rule.exec]
-
-    eventsDebug('Matched rule for %s', eventStr)
-
-    const cp = spawn(exec.shift(), exec, {
-      env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env)
-    })
-
-    cp.on('error', (err) => {
-      return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
-    })
-
-    cp.on('close', (code) => {
-      eventsDebug('Executed command [%s] exited with [%d]', rule.exec, code)
-
-      if (logStream) {
-        logStream.write(eventStr + '\n')
-        logStream.write(new Date() + '\n')
-        logStream.write('Took ' + (Date.now() - startTs) + ' ms\n')
-      }
-
-      rule.executing = false
-      if (rule.queued === true) {
-        rule.queued = false
-        executeRule(rule) // do it again!
-      }
-    })
-
-    if (logStream) {
-      prefixStream(cp.stdout, 'stdout: ').pipe(logStream, { end: false })
-      prefixStream(cp.stderr, 'stderr: ').pipe(logStream, { end: false })
-    }
+function executeRule (logStream, rule, event) {
+  if (rule.executing === true) {
+    // coalesce runs requested while busy into one, using the newest event
+    rule.pending = event
+    return
   }
 
+  rule.executing = true
+
+  const startTs = Date.now()
+  const eventStr = `event="${rule.event}", match="${rule.match}", exec="${rule.exec}"`
+  const [cmd, ...args] = Array.isArray(rule.exec) ? rule.exec : ['sh', '-c', rule.exec]
+
+  eventsDebug('Matched rule for %s', eventStr)
+
+  const cp = spawn(cmd, args, {
+    env: Object.assign(envFromPayload(event.payload, 'gh_'), process.env)
+  })
+
+  cp.on('error', (err) => {
+    return eventsDebug('Error executing command [%s]: %s', rule.exec, err.message)
+  })
+
+  cp.on('close', (code) => {
+    eventsDebug('Executed command [%s] exited with [%d]', rule.exec, code)
+
+    if (logStream) {
+      logStream.write(eventStr + '\n')
+      logStream.write(new Date() + '\n')
+      logStream.write('Took ' + (Date.now() - startTs) + ' ms\n')
+    }
+
+    rule.executing = false
+    const pending = rule.pending
+    if (pending) {
+      rule.pending = null
+      executeRule(logStream, rule, pending)
+    }
+  })
+
+  if (logStream) {
+    prefixStream(cp.stdout, 'stdout: ').pipe(logStream, { end: false })
+    prefixStream(cp.stderr, 'stderr: ').pipe(logStream, { end: false })
+  }
+}
+
+function handleRules (logStream, rules, event) {
   rules.forEach((rule) => {
     if (rule.event !== '*' && rule.event !== event.event) {
       return
@@ -259,7 +261,7 @@ function handleRules (logStream, rules, event) {
       return
     }
 
-    executeRule(rule)
+    executeRule(logStream, rule, event)
   })
 }
 
