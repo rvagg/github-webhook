@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import crypto from 'node:crypto'
+import { spawn } from 'node:child_process'
 import { test } from 'node:test'
 import assert from 'node:assert'
 import { fileURLToPath } from 'node:url'
@@ -253,4 +254,23 @@ test('rule with large output completes without a log', { skip: process.platform 
 
   server.webhookHandler.emit('*', { event: 'push', payload: { n: 1 } })
   assert.deepStrictEqual(await waitForLines(out, 1), ['1'])
+})
+
+test('CLI exits on SIGTERM', { skip: process.platform === 'win32' }, async () => {
+  const cp = spawn(process.execPath, [path.join(__dirname, 'github-webhook.js'), '--port', '0', '--path', '/webhook', '--secret', 'foofaa'], {
+    env: { ...process.env, DEBUG: 'github-webhook:server' }
+  })
+
+  const exited = new Promise((resolve) => cp.on('exit', (code, signal) => resolve({ code, signal })))
+  await new Promise((resolve, reject) => {
+    cp.stderr.on('data', (data) => {
+      if (data.toString().includes('Listening on')) {
+        resolve()
+      }
+    })
+    exited.then(({ code }) => reject(new Error(`CLI exited early with code ${code}`)))
+  })
+
+  cp.kill('SIGTERM')
+  assert.deepStrictEqual(await exited, { code: 143, signal: null })
 })

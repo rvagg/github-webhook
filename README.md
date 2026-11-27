@@ -219,6 +219,8 @@ Enable debug output with the `DEBUG` environment variable:
 DEBUG=github-webhook:* github-webhook --config /etc/github-webhook.json
 ```
 
+`github-webhook:events` also reports events that don't match any rule.
+
 ## More Information
 
 **github-webhook** is powered by [github-webhook-handler](https://github.com/rvagg/github-webhook-handler).
