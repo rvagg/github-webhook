@@ -1,3 +1,9 @@
+## [3.0.51](https://github.com/rvagg/github-webhook/compare/v3.0.50...v3.0.51) (2026-11-27)
+
+### Bug Fixes
+
+* rerun queued rules with the newest event, preserve array exec ([#98](https://github.com/rvagg/github-webhook/issues/98)) ([098ed87](https://github.com/rvagg/github-webhook/commit/098ed877e0149ca5b63a37cef13266ee9998bb9f)), closes [#13](https://github.com/rvagg/github-webhook/issues/13)
+
 ## [3.0.50](https://github.com/rvagg/github-webhook/compare/v3.0.49...v3.0.50) (2026-11-02)
 
 ### Trivial Changes
