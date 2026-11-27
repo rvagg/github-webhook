@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { test } from 'node:test'
@@ -172,4 +173,52 @@ test('valid request triggers rule', { skip: process.platform === 'win32' }, asyn
 
   // Cleanup
   fs.unlinkSync(tmpfile)
+})
+
+async function waitForLines (file, count, timeout = 5000) {
+  const deadline = Date.now() + timeout
+  for (;;) {
+    const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
+    if (lines.length >= count || Date.now() > deadline) {
+      return lines
+    }
+    await new Promise((resolve) => setTimeout(resolve, 20))
+  }
+}
+
+test('events arriving during a run coalesce into one rerun with the newest payload', { skip: process.platform === 'win32' }, async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-webhook-'))
+  t.after(() => fs.rmSync(dir, { recursive: true }))
+  const out = path.join(dir, 'out')
+  const server = webhook({
+    port: 0,
+    path: '/webhook',
+    secret: 'foofaa',
+    rules: [{ event: 'push', match: 'true', exec: `sleep 0.2; echo "$gh_n" >> ${out}` }]
+  })
+
+  for (const n of [1, 2, 3]) {
+    server.webhookHandler.emit('*', { event: 'push', payload: { n } })
+  }
+
+  assert.deepStrictEqual(await waitForLines(out, 2), ['1', '3'])
+  await new Promise((resolve) => setTimeout(resolve, 400))
+  assert.deepStrictEqual(await waitForLines(out, 3, 0), ['1', '3'])
+})
+
+test('array exec rule runs repeatedly', { skip: process.platform === 'win32' }, async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-webhook-'))
+  t.after(() => fs.rmSync(dir, { recursive: true }))
+  const out = path.join(dir, 'out')
+  const server = webhook({
+    port: 0,
+    path: '/webhook',
+    secret: 'foofaa',
+    rules: [{ event: 'push', match: 'true', exec: ['sh', '-c', `echo "$gh_n" >> ${out}`] }]
+  })
+
+  server.webhookHandler.emit('*', { event: 'push', payload: { n: 1 } })
+  assert.deepStrictEqual(await waitForLines(out, 1), ['1'])
+  server.webhookHandler.emit('*', { event: 'push', payload: { n: 2 } })
+  assert.deepStrictEqual(await waitForLines(out, 2), ['1', '2'])
 })
