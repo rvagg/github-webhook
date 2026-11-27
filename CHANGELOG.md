@@ -1,3 +1,9 @@
+## [3.0.52](https://github.com/rvagg/github-webhook/compare/v3.0.51...v3.0.52) (2026-11-27)
+
+### Bug Fixes
+
+* recover rules from spawn throws, ignore stdio without a log ([#99](https://github.com/rvagg/github-webhook/issues/99)) ([714793c](https://github.com/rvagg/github-webhook/commit/714793cfd250bb40ab61f14793f89de26efd68fd))
+
 ## [3.0.51](https://github.com/rvagg/github-webhook/compare/v3.0.50...v3.0.51) (2026-11-27)
 
 ### Bug Fixes
