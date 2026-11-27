@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import http from 'node:http'
+import os from 'node:os'
 import fs from 'node:fs'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -79,6 +80,14 @@ if (isMain) {
     ? [config.port, config.host, listening]
     : [config.port, listening]
   )
+
+  // as PID 1 (e.g. in a container) Node gets no default signal handling, so exit explicitly
+  for (const signal of ['SIGINT', 'SIGTERM']) {
+    process.once(signal, () => {
+      serverDebug('Received %s, exiting', signal)
+      process.exit(128 + os.constants.signals[signal])
+    })
+  }
 }
 
 function collectRules (rules) {
@@ -266,17 +275,16 @@ function executeRule (logStream, rule, event) {
 }
 
 function handleRules (logStream, rules, event) {
-  rules.forEach((rule) => {
-    if (rule.event !== '*' && rule.event !== event.event) {
-      return
-    }
+  const matched = rules.filter((rule) =>
+    (rule.event === '*' || rule.event === event.event) && matchme(event.payload, rule.match)
+  )
 
-    if (!matchme(event.payload, rule.match)) {
-      return
-    }
+  if (matched.length === 0) {
+    eventsDebug('Unmatched event="%s", id="%s"', event.event, event.id)
+    return
+  }
 
-    executeRule(logStream, rule, event)
-  })
+  matched.forEach((rule) => executeRule(logStream, rule, event))
 }
 
 export default createServer
